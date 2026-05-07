@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swaze Marketing — Scale Without Limits</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --black2: #111111;
+      --black3: #1a1a1a;
+      --black4: #222222;
+      --white: #ffffff;
+      --white-dim: rgba(255,255,255,0.55);
+      --white-faint: rgba(255,255,255,0.08);
+      --red: #cc1f1f;
+      --red-bright: #e02020;
+      --red-dark: #a01515;
+      --gap: clamp(60px, 8vw, 120px);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* CURSOR */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--red);
+      border-radius: 50%;
+      position: fixed; pointer-events: none;
+      z-index: 9999; transform: translate(-50%,-50%);
+      transition: transform 0.12s;
+    }
+    .cursor-ring {
+      width: 34px; height: 34px;
+      border: 1.5px solid rgba(204,31,31,0.45);
+      border-radius: 50%;
+      position: fixed; pointer-events: none;
+      z-index: 9998; transform: translate(-50%,-50%);
+      transition: all 0.22s ease;
+    }
+    body:has(a:hover) .cursor { transform: translate(-50%,-50%) scale(2.8); }
+    body:has(a:hover) .cursor-ring { opacity: 0; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 6vw;
+      background: rgba(10,10,10,0.92);
+      border-bottom: 1px solid var(--white-faint);
+      backdrop-filter: blur(8px);
+      transition: background 0.3s;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none;
+    }
+.nav-logo-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.55rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      line-height: 1;
+    }
+    .nav-logo-text span { color: var(--red); }
+    nav ul { list-style: none; display: flex; gap: 36px; }
+    nav a {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none; transition: color 0.2s;
+    }
+    nav a:hover { color: var(--red); }
+    .nav-cta {
+      background: var(--red) !important;
+      color: #fff !important;
+      padding: 10px 22px;
+      clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--red-dark) !important; }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 6vw; position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 55% 70% at 75% 50%, rgba(204,31,31,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 30% 40% at 10% 80%, rgba(204,31,31,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0px, transparent 1px, transparent 80px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, transparent 1px, transparent 80px);
+      pointer-events: none;
+    }
+    .hero-left { position: relative; z-index: 1; padding-top: 90px; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--red);
+      margin-bottom: 28px; opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-tag::before { content:''; width: 28px; height: 2px; background: var(--red); }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4.5rem, 8.5vw, 9.5rem);
+      line-height: 0.9; letter-spacing: 0.02em; color: var(--white);
+      opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+    }
+    h1 .accent { color: var(--red); display: block; }
+    .hero-sub {
+      margin-top: 28px; max-width: 400px;
+      font-size: 1rem; line-height: 1.8; color: var(--white-dim);
+      opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+    }
+    .hero-actions {
+      display: flex; gap: 14px; margin-top: 40px;
+      opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+    }
+    .btn-primary {
+      font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: #fff; background: var(--red); padding: 15px 34px;
+      clip-path: polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+      text-decoration: none; display: inline-block;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--red-dark); transform: translateY(-2px); }
+    .btn-ghost {
+      font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: #fff; border: 1.5px solid rgba(255,255,255,0.2); padding: 15px 34px;
+      text-decoration: none; display: inline-block;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--red); color: var(--red); }
+
+    /* Hero right */
+    .hero-right {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 20px;
+      padding-top: 90px;
+      opacity: 0; animation: fadeIn 1s 1s forwards;
+    }
+.hero-stats {
+      display: flex; gap: 32px; margin-top: 8px;
+    }
+    .stat-block { text-align: center; }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem; color: var(--white); line-height: 1;
+    }
+    .stat-num .r { color: var(--red); }
+    .stat-label {
+      font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-top: 4px;
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 36px; left: 6vw;
+      display: flex; align-items: center; gap: 12px;
+      font-family: 'Syne', sans-serif; font-size: 0.68rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      opacity: 0; animation: fadeIn 1s 1.5s forwards;
+    }
+    .scroll-line {
+      width: 40px; height: 1px; background: var(--red);
+      animation: scrollPulse 2s infinite;
+    }
+
+    /* MARQUEE */
+    .marquee-wrapper {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: var(--black2); overflow: hidden; padding: 16px 0;
+    }
+    .marquee-track {
+      display: flex; gap: 48px; width: max-content;
+      animation: marquee 24s linear infinite;
+    }
+    .marquee-item {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem; letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.25); white-space: nowrap;
+      display: flex; align-items: center; gap: 48px;
+    }
+    .marquee-item .dot { color: var(--red); font-size: 1.2rem; }
+
+
+    /* TOOLS SECTION */
+    .tool-card {
+      background: var(--black3); padding: 48px 36px;
+      position: relative; overflow: hidden; transition: background 0.3s;
+    }
+    .tool-card::after {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background: var(--red); transform: scaleX(0); transform-origin:left;
+      transition: transform 0.4s ease;
+    }
+    .tool-card:hover::after { transform: scaleX(1); }
+    .tool-card:hover { background: var(--black4); }
+    .tool-icon-wrap {
+      width: 56px; height: 56px; margin-bottom: 24px;
+      background: rgba(204,31,31,0.1); border: 1px solid rgba(204,31,31,0.25);
+      display: flex; align-items: center; justify-content: center; color: var(--red);
+    }
+    .tool-name {
+      font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700;
+      color: #fff; margin-bottom: 14px;
+    }
+    .tool-desc {
+      font-size: 0.875rem; line-height: 1.8; color: var(--white-dim);
+    }
+    .tool-everything {
+      background: var(--black3); padding: 48px 52px;
+      display: flex; align-items: center; justify-content: space-between; gap: 40px;
+      border-left: 3px solid var(--red);
+    }
+    @media (max-width: 900px) {
+      .tool-everything { flex-direction: column; align-items: flex-start; }
+      #tools > div:nth-child(2) { grid-template-columns: 1fr !important; }
+    }
+
+    /* SECTION COMMON */
+    .section-label {
+      font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.24em; text-transform: uppercase; color: var(--red);
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 4.5vw, 5rem);
+      line-height: 0.95; color: var(--white); margin-bottom: 64px;
+    }
+    .section-title em { color: rgba(255,255,255,0.15); font-style: normal; }
+
+    /* SERVICES */
+    #services { padding: var(--gap) 6vw; }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 2px;
+    }
+    .service-card {
+      background: var(--black2); padding: 48px 36px;
+      position: relative; overflow: hidden; transition: background 0.3s;
+    }
+    .service-card::after {
+      content:''; position: absolute; top:0; left:0; right:0; height:2px;
+      background: var(--red); transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .service-card:hover::after { transform: scaleX(1); }
+    .service-card:hover { background: var(--black3); }
+    .service-num {
+      font-family: 'Bebas Neue', sans-serif; font-size: 4.5rem;
+      color: rgba(255,255,255,0.03); line-height: 1;
+      position: absolute; top: 16px; right: 20px;
+      transition: color 0.3s; user-select: none;
+    }
+    .service-card:hover .service-num { color: rgba(204,31,31,0.06); }
+    .service-icon { width: 44px; height: 44px; margin-bottom: 24px; color: var(--red); }
+    .service-name {
+      font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700;
+      color: #fff; margin-bottom: 14px;
+    }
+    .service-desc {
+      font-size: 0.875rem; line-height: 1.8; color: var(--white-dim);
+    }
+    .service-link {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 28px;
+      font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--red); text-decoration: none; transition: gap 0.2s;
+    }
+    .service-link:hover { gap: 14px; }
+
+    /* WHY */
+    #why {
+      padding: var(--gap) 6vw; background: var(--black2);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .why-sub {
+      margin-top: 20px; font-size: 0.95rem; line-height: 1.9;
+      color: var(--white-dim); max-width: 440px;
+    }
+    .why-cta { margin-top: 36px; }
+    .why-right { display: flex; flex-direction: column; gap: 2px; }
+    .why-item {
+      display: flex; align-items: flex-start; gap: 20px;
+      background: var(--black3); padding: 28px 24px;
+      transition: background 0.2s;
+    }
+    .why-item:hover { background: var(--black4); }
+    .why-item-icon {
+      width: 38px; height: 38px; flex-shrink: 0;
+      background: rgba(204,31,31,0.1);
+      border: 1px solid rgba(204,31,31,0.2);
+      display: flex; align-items: center; justify-content: center; color: var(--red);
+    }
+    .why-item-title {
+      font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700;
+      color: #fff; margin-bottom: 5px;
+    }
+    .why-item-text { font-size: 0.85rem; line-height: 1.75; color: rgba(255,255,255,0.4); }
+
+    /* PROCESS */
+    #process { padding: var(--gap) 6vw; }
+    .process-steps {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 0; position: relative;
+    }
+    .process-steps::before {
+      content:''; position: absolute;
+      top: 31px; left: 0; right: 0; height: 1px;
+      background: linear-gradient(to right, transparent, rgba(204,31,31,0.3), transparent);
+    }
+    .process-step { padding: 0 28px; border-left: 1px solid rgba(255,255,255,0.05); }
+    .process-step:first-child { border-left: none; padding-left: 0; }
+    .step-dot {
+      width: 62px; height: 62px;
+      border: 1.5px solid var(--red); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--red);
+      margin-bottom: 28px; background: var(--black); position: relative; z-index: 1;
+    }
+    .step-title {
+      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+      color: #fff; margin-bottom: 10px;
+    }
+    .step-desc { font-size: 0.85rem; line-height: 1.75; color: rgba(255,255,255,0.4); }
+
+    /* CTA BAND */
+    #cta {
+      margin: 0 6vw var(--gap);
+      background: var(--red);
+      clip-path: polygon(0 0, 100% 0, calc(100% - 28px) 100%, 28px 100%);
+      padding: 72px 80px;
+      display: flex; align-items: center; justify-content: space-between; gap: 40px;
+    }
+    .cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 3.5vw, 4rem); color: #fff; line-height: 1;
+    }
+    .cta-sub { margin-top: 10px; font-size: 0.95rem; color: rgba(255,255,255,0.7); }
+    .btn-white {
+      font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--red); background: #fff; padding: 16px 40px; white-space: nowrap;
+      clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+      text-decoration: none; display: inline-block; transition: background 0.2s;
+    }
+    .btn-white:hover { background: #e8e8e8; }
+
+    /* CONTACT */
+    #contact { padding: var(--gap) 6vw; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+    .contact-info-text {
+      font-size: 0.95rem; line-height: 1.9; color: var(--white-dim);
+      max-width: 400px; margin-bottom: 36px;
+    }
+    .contact-detail {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+    }
+    .contact-detail span { font-size: 0.875rem; color: rgba(255,255,255,0.5); }
+    .contact-form { display: flex; flex-direction: column; gap: 14px; }
+    .contact-form input,
+    .contact-form select,
+    .contact-form textarea {
+      background: var(--black2); border: 1px solid rgba(255,255,255,0.07);
+      padding: 15px 18px; color: #fff;
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      outline: none; transition: border-color 0.2s; resize: vertical;
+    }
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder { color: rgba(255,255,255,0.28); }
+    .contact-form select { color: rgba(255,255,255,0.45); appearance: none; cursor: pointer; }
+    .contact-form input:focus,
+    .contact-form select:focus,
+    .contact-form textarea:focus { border-color: rgba(204,31,31,0.5); }
+    .form-success {
+      display: none; color: var(--red);
+      font-family: 'Syne', sans-serif; font-size: 0.82rem; letter-spacing: 0.1em;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 56px 6vw 0;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px;
+    }
+    .footer-brand-logo {
+      display: flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: 14px;
+    }
+.footer-brand-logo span {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+      letter-spacing: 0.1em; color: #fff;
+    }
+    .footer-brand-logo span em { color: var(--red); font-style: normal; }
+    .footer-tagline { font-size: 0.84rem; color: rgba(255,255,255,0.3); line-height: 1.75; max-width: 240px; }
+    .footer-col-title {
+      font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--red); margin-bottom: 18px;
+    }
+    .footer-col a {
+      display: block; font-size: 0.84rem;
+      color: rgba(255,255,255,0.35); text-decoration: none;
+      margin-bottom: 10px; transition: color 0.2s;
+    }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      margin: 40px 6vw 0; padding: 22px 0;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy { font-size: 0.78rem; color: rgba(255,255,255,0.2); }
+    .footer-socials { display: flex; gap: 18px; }
+    .footer-socials a {
+      font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(255,255,255,0.28); text-decoration: none; transition: color 0.2s;
+    }
+    .footer-socials a:hover { color: var(--red); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(28px); }
+      to { opacity:1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; } to { opacity:1; }
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity:0.3; width:40px; }
+      50% { opacity:0.8; width:60px; }
+    }
+    .reveal { opacity:0; transform: translateY(36px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity:1; transform: translateY(0); }
+
+    /* Red divider accent */
+    .red-line { display: block; width: 48px; height: 3px; background: var(--red); margin: 20px 0 36px; }
+
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .services-grid { grid-template-columns: 1fr; }
+      #why { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+      .process-steps::before { display: none; }
+      #cta { flex-direction: column; clip-path: none; }
+      footer { grid-template-columns: 1fr 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-logo">
+    <div class="nav-logo-text">SWAZE<span>.</span></div>
+  </div>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact" class="nav-cta">Get Started</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-left">
+    <div class="hero-tag">Brand Scaling & Web Design</div>
+    <h1>SCALE<span class="accent">FASTER.</span>WIN BIGGER.</h1>
+    <p class="hero-sub">Swaze Marketing is a freelance powerhouse that accelerates brands through high-impact advertising and custom web experiences built to convert.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Start Scaling</a>
+      <a href="#services" class="btn-ghost">Our Services</a>
+    </div>
+  </div>
+  <div class="hero-right">
+
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div>Scroll to explore</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrapper">
+  <div class="marquee-track">
+    <div class="marquee-item">PAID ADS <span class="dot">✦</span> BRAND STRATEGY <span class="dot">✦</span> WEB DESIGN <span class="dot">✦</span> SOCIAL MEDIA <span class="dot">✦</span> SEO & CONTENT <span class="dot">✦</span> CONVERSION OPTIMIZATION <span class="dot">✦</span></div>
+    <div class="marquee-item">PAID ADS <span class="dot">✦</span> BRAND STRATEGY <span class="dot">✦</span> WEB DESIGN <span class="dot">✦</span> SOCIAL MEDIA <span class="dot">✦</span> SEO & CONTENT <span class="dot">✦</span> CONVERSION OPTIMIZATION <span class="dot">✦</span></div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-label">What We Do</div>
+  <div class="section-title">SERVICES BUILT<br><em>TO SCALE</em></div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-num">01</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 36L18 24l8 8L36 20M36 20h-8M36 20v8"/><rect x="2" y="2" width="44" height="44" rx="3"/></svg>
+      <div class="service-name">Paid Advertising</div>
+      <div class="service-desc">Google Ads, Meta, TikTok — we engineer campaigns that drive measurable ROI and rapid customer acquisition at scale.</div>
+      <a href="#contact" class="service-link">Learn more →</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">02</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="24" cy="14" r="8"/><path d="M8 40c0-8.837 7.163-16 16-16s16 7.163 16 16"/><path d="M32 10l4 4-4 4"/></svg>
+      <div class="service-name">Brand Strategy</div>
+      <div class="service-desc">We develop complete brand identities — positioning, voice, visuals — that carve out a commanding presence in your market.</div>
+      <a href="#contact" class="service-link">Learn more →</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">03</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="40" height="28" rx="2"/><path d="M16 36v4M32 36v4M12 40h24M4 28h40"/></svg>
+      <div class="service-name">Website Design & Dev</div>
+      <div class="service-desc">Custom websites built for performance — fast, beautiful, and optimized to turn visitors into loyal customers.</div>
+      <a href="#contact" class="service-link">Learn more →</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">04</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20 20-8.954 20-20"/><path d="M32 4c4 6 6 12 6 20M16 4c-4 6-6 12-6 20M4 24h40M24 4v40"/></svg>
+      <div class="service-name">Social Media Growth</div>
+      <div class="service-desc">Content strategy, management, and paid social that builds genuine audiences and consistently drives engagement.</div>
+      <a href="#contact" class="service-link">Learn more →</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">05</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="20" cy="20" r="12"/><path d="M29 29l11 11M20 14v12M14 20h12"/></svg>
+      <div class="service-name">SEO & Content</div>
+      <div class="service-desc">Organic growth strategies that compound over time — from keyword-driven content to full-site technical optimization.</div>
+      <a href="#contact" class="service-link">Learn more →</a>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-num">06</div>
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 32l10-10 8 6 8-12 8 8"/><rect x="4" y="4" width="40" height="40" rx="2"/><path d="M4 20h40"/></svg>
+      <div class="service-name">Conversion Optimization</div>
+      <div class="service-desc">Data-driven funnel audits and A/B testing that squeeze maximum revenue out of every visitor you already have.</div>
+      <a href="#contact" class="service-link">Learn more →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- TOOLS SECTION -->
+<section id="tools" style="padding: var(--gap) 6vw; background: var(--black2);">
+  <div style="text-align:center; max-width: 700px; margin: 0 auto 72px;">
+    <div class="section-label" style="justify-content:center;display:flex;">Our Toolkit</div>
+    <div class="section-title" style="margin-bottom:20px;text-align:center;">ALL THE TOOLS YOU NEED<br><em>TO GROW YOUR BRAND</em></div>
+    <p style="font-size:1rem;line-height:1.85;color:var(--white-dim);">From strategy to analytics, we offer everything you need to boost engagement, drive conversions, and expand your brand's reach.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:2px;">
+    <!-- TikTok Ads -->
+    <div class="tool-card reveal">
+      <div class="tool-icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/>
+        </svg>
+      </div>
+      <div class="tool-name">TikTok Ads</div>
+      <div class="tool-desc">Leverage TikTok's powerful algorithm to reach a highly engaged audience with creative, short-form video ads that capture attention and drive conversions.</div>
+    </div>
+    <!-- Facebook Campaigns -->
+    <div class="tool-card reveal">
+      <div class="tool-icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+        </svg>
+      </div>
+      <div class="tool-name">Facebook Campaigns</div>
+      <div class="tool-desc">Create targeted campaigns on Facebook that connect with the right audience, increasing engagement and driving measurable results for your brand.</div>
+    </div>
+    <!-- Email & SMS -->
+    <div class="tool-card reveal">
+      <div class="tool-icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </div>
+      <div class="tool-name">Email & SMS</div>
+      <div class="tool-desc">Reach your audience directly through personalized email and SMS campaigns that drive engagement, increase conversions, and nurture customer relationships.</div>
+    </div>
+  </div>
+
+  <!-- Everything you need banner -->
+  <div class="tool-everything reveal">
+    <div class="tool-everything-text">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,3vw,3rem);letter-spacing:0.04em;color:#fff;">Everything You Need</div>
+      <p style="font-size:0.95rem;color:var(--white-dim);margin-top:8px;max-width:500px;">One partner. Every channel. Full accountability. We bring together every growth lever your brand needs under one roof.</p>
+    </div>
+    <a href="#contact" class="btn-primary" style="white-space:nowrap;">Get Started →</a>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="why-left reveal">
+    <div class="section-label">Why Swaze</div>
+    <div class="section-title" style="margin-bottom:0">WE DON'T<br>JUST MARKET.<br><em>WE SCALE.</em></div>
+    <span class="red-line"></span>
+    <p class="why-sub">We're not an agency with layers of account managers. You get a dedicated expert personally invested in your growth — fast execution, direct communication, real results.</p>
+    <div class="why-cta"><a href="#contact" class="btn-primary">Work With Us</a></div>
+  </div>
+  <div class="why-right">
+    <div class="why-item reveal">
+      <div class="why-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <div>
+        <div class="why-item-title">Speed Over Bureaucracy</div>
+        <div class="why-item-text">No agency red tape. We move fast, adapt fast, and keep you in the loop every step of the way.</div>
+      </div>
+    </div>
+    <div class="why-item reveal">
+      <div class="why-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div>
+        <div class="why-item-title">Results-Focused Contracts</div>
+        <div class="why-item-text">Transparent pricing tied to deliverables. No fluff retainers — you pay for work that moves the needle.</div>
+      </div>
+    </div>
+    <div class="why-item reveal">
+      <div class="why-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+      <div>
+        <div class="why-item-title">Full-Stack Marketing</div>
+        <div class="why-item-text">From brand story to landing page to ad funnel — we cover the entire growth ecosystem so nothing falls through the cracks.</div>
+      </div>
+    </div>
+    <div class="why-item reveal">
+      <div class="why-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div>
+        <div class="why-item-title">Data at the Core</div>
+        <div class="why-item-text">Every decision is backed by analytics. We track, test, and iterate until your numbers climb consistently.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div style="margin-bottom:64px;">
+    <div class="section-label">How We Work</div>
+    <div class="section-title" style="margin-bottom:0">THE SWAZE<br><em>PROCESS</em></div>
+  </div>
+  <div class="process-steps">
+    <div class="process-step reveal">
+      <div class="step-dot">01</div>
+      <div class="step-title">Discovery Call</div>
+      <div class="step-desc">We dig deep into your business, goals, competitors, and current marketing to understand exactly where you are and where you want to go.</div>
+    </div>
+    <div class="process-step reveal">
+      <div class="step-dot">02</div>
+      <div class="step-title">Strategy Build</div>
+      <div class="step-desc">We craft a custom growth roadmap — channels, budgets, timelines, and milestones — tailored specifically to your brand and market.</div>
+    </div>
+    <div class="process-step reveal">
+      <div class="step-dot">03</div>
+      <div class="step-title">Execute & Launch</div>
+      <div class="step-desc">Campaigns go live, sites get built, and content gets published. Fast. We don't believe in months of prep before seeing results.</div>
+    </div>
+    <div class="process-step reveal">
+      <div class="step-dot">04</div>
+      <div class="step-title">Optimize & Scale</div>
+      <div class="step-desc">We analyze performance weekly, double down on what works, cut what doesn't, and systematically scale your winning channels.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div id="cta" class="reveal">
+  <div>
+    <div class="cta-title">READY TO SCALE<br>YOUR BRAND?</div>
+    <p class="cta-sub">Let's talk about what's possible for your business.</p>
+  </div>
+  <a href="#contact" class="btn-white">Book a Free Call</a>
+</div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">Contact</div>
+  <div class="section-title" style="margin-bottom:52px;">LET'S BUILD<br><em>TOGETHER</em></div>
+  <div class="contact-grid">
+    <div class="reveal">
+      <p class="contact-info-text">Whether you need a new website, ad campaigns, or a full brand overhaul — we want to hear about your business and show you what's possible.</p>
+      <div class="contact-detail">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cc1f1f" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>swazemarketing@gmail.com</span>
+      </div>
+      <div class="contact-detail">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cc1f1f" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.14 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.05 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16z"/></svg>
+        <span><strong style="color:rgba(255,255,255,0.7);font-family:'Syne',sans-serif;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;margin-right:8px;">Phone 1</strong>254-410-9545</span>
+      </div>
+      <div class="contact-detail">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#cc1f1f" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.14 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.05 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16z"/></svg>
+        <span><strong style="color:rgba(255,255,255,0.7);font-family:'Syne',sans-serif;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;margin-right:8px;">Phone 2</strong>254-314-6561</span>
+      </div>
+    </div>
+    <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+      <input type="text" placeholder="Your Name">
+      <input type="email" placeholder="Email Address">
+      <select>
+        <option value="">What do you need?</option>
+        <option>Paid Advertising</option>
+        <option>Website Design & Development</option>
+        <option>Brand Strategy</option>
+        <option>Social Media Growth</option>
+        <option>Full Scale Package</option>
+      </select>
+      <textarea placeholder="Tell us about your business and goals..." rows="5"></textarea>
+      <button type="submit" class="btn-primary" style="border:none;cursor:pointer;align-self:flex-start;">Send Message →</button>
+      <div class="form-success" id="formSuccess">✓ Message sent! We'll be in touch shortly.</div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand-logo">
+      <span>SWAZE<em>.</em></span>
+    </div>
+    <p class="footer-tagline">Freelance brand scaling through advertising and web design. Built for growth.</p>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Services</div>
+    <a href="#services">Paid Advertising</a>
+    <a href="#services">Brand Strategy</a>
+    <a href="#services">Website Design</a>
+    <a href="#services">Social Media</a>
+    <a href="#services">SEO & Content</a>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Company</div>
+    <a href="#process">Our Process</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Connect</div>
+    <a href="mailto:swazemarketing@gmail.com">swazemarketing@gmail.com</a>
+    <a href="#contact">Book a Call</a>
+    <a href="javascript:void(0)">LinkedIn</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <div class="footer-copy">© 2025 Swaze Marketing. All rights reserved.</div>
+  <div class="footer-socials">
+    <a href="javascript:void(0)">LinkedIn</a>
+    <a href="javascript:void(0)">Twitter</a>
+  </div>
+</div>
+
+<script>
+
+
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function anim(){
+    cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(anim);
+  })();
+
+  // Reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e,i) => {
+      if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'), i*70); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el=>obs.observe(el));
+
+  // Form
+  function handleSubmit(e){
+    e.preventDefault();
+    document.getElementById('formSuccess').style.display='block';
+    e.target.reset();
+  }
+
+  // Nav on scroll
+  window.addEventListener('scroll', ()=>{
+    document.getElementById('mainNav').style.background =
+      window.scrollY > 50 ? 'rgba(10,10,10,0.98)' : 'rgba(10,10,10,0.92)';
+  });
+</script>
+</body>
+</html>
